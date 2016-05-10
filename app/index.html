@@ -7,6 +7,13 @@
   <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body ng-app="app">
+  <!-- header -->
+  <nav class="navbar navbar-default">
+    <ul class="nav navbar-nav">
+      <li ui-sref-active="active" ><a ui-sref="login">Login</a></li>
+      <li ui-sref-active="active" ><a ui-sref="register">Register</a></li>
+    </ul>
+  </nav>
 
   <main class="container" ui-view></main>
 

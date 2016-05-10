@@ -9,12 +9,14 @@
     function Controller() {
       var vm = this;
 
+      vm.firstName = null;
+      vm.lastName = null;
       vm.email = null;
       vm.password = null;
 
-      vm.login = login;
+      vm.register = register;
 
-      function login() {
+      function register() {
         console.log("Email: "+ vm.email + ", Password: "+ vm.password);
       }
 
