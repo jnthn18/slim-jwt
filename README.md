@@ -1,0 +1,1 @@
+# AngularJS JWT Auth with Slim 3
