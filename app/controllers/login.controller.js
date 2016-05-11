@@ -6,7 +6,7 @@
     .module('app')
     .controller('Login.IndexController', Controller);
 
-    function Controller() {
+    function Controller($http) {
       var vm = this;
 
       vm.email = null;
@@ -15,7 +15,16 @@
       vm.login = login;
 
       function login() {
-        console.log("Email: "+ vm.email + ", Password: "+ vm.password);
+        var info = {
+          email: vm.email,
+          password: vm.password
+        }
+
+        $http.post('api/login', info).success(function(data) {
+          console.log(data);
+        }).error(function(error) {
+          console.log(error);
+        });
       }
 
     }

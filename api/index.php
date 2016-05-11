@@ -3,9 +3,36 @@ require 'vendor/autoload.php';
 
 $app = new \Slim\App;
 
+$app->post('/login', 'loginUser');
 $app->post('/register', 'registerUser');
 
 $app->run();
+
+function loginUser($request, $response) {
+  $email = $request->getParam('email');
+  $password = $request->getParam('password');
+
+  $sql = "SELECT * FROM users WHERE email = :email";
+  try {
+    $db = getConnection();
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(':email', $email);
+    $stmt->execute();
+  } catch (PDOException $e) {
+    echo json_encode('{"error":{"text":'. $e->getMessage() . '}}');
+  }
+
+  if($stmt->rowCount() > 0) {
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $hashedPassword = $result['password'];
+
+    if(password_verify($password, $hashedPassword)) {
+      echo json_encode("Login Works");
+    } else {
+      echo json_encode("Wrong Password");
+    }
+  }
+}
 
 function registerUser($request, $response) {
   $email = $request->getParam('email');
