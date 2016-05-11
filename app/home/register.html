@@ -1,28 +1,33 @@
 <div class="col-md-10 col-md-offset-1">
-  <form name="registerForm" class="col-md-8 col-md-offset-2">
+  <form name="registrationForm" class="col-md-8 col-md-offset-2" novalidate>
     <h2>Sign Up</h2>
     <div class="row">
       <div class="col-sm-6">
-        <div class="form-group">
+        <div class="form-group" ng-class="{ 'has-error' : registrationForm.firstName.$invalid && registrationForm.firstName.$touched && vm.submitted || !registrationForm.firstName.$dirty && vm.submitted }">
           <label>First Name</label>
-          <input type="text" class="form-control" ng-model="vm.firstName" placeholder="First Name">
+          <input type="text" class="form-control" name="firstName" ng-model="vm.firstName" placeholder="First Name" required>
+          <p ng-show="registrationForm.firstName.$invalid && registrationForm.firstName.$touched && vm.submitted || !registrationForm.firstName.$dirty && vm.submitted" class="help-block">Your first name is required.</p>
         </div>
       </div>
       <div class="col-sm-6">
-        <div class="form-group">
+        <div class="form-group" ng-class="{ 'has-error' : registrationForm.lastName.$invalid && registrationForm.lastName.$touched && vm.submitted || !registrationForm.lastName.$dirty && vm.submitted }">
           <label>Last Name</label>
-          <input type="text" class="form-control" ng-model="vm.lastName" placeholder="Last Name">
+          <input type="text" class="form-control" name="lastName" ng-model="vm.lastName" placeholder="Last Name" required>
+          <p ng-show="registrationForm.lastName.$invalid && registrationForm.lastName.$touched && vm.submitted || !registrationForm.lastName.$dirty && vm.submitted" class="help-block">Your last name is required.</p>
         </div>
       </div>
     </div>
-    <div class="form-group">
+    <div class="form-group" ng-class="{ 'has-error' : registrationForm.email.$invalid && registrationForm.email.$touched && vm.submitted || !registrationForm.email.$dirty && vm.submitted }">
       <label>Email</label>
-      <input type="email" class="form-control" ng-model="vm.email" placeholder="Email">
+      <input type="email" class="form-control" name="email" ng-model="vm.email" placeholder="Email" required>
+      <p ng-show="registrationForm.email.$invalid && registrationForm.email.$touched && vm.submitted || !registrationForm.email.$dirty && vm.submitted" class="help-block">Please enter a valid email.</p>
     </div>
-    <div class="form-group">
+    <div class="form-group" ng-class="{ 'has-error' : registrationForm.password.$invalid && registrationForm.password.$touched && vm.submitted || !registrationForm.password.$dirty && vm.submitted }">
       <label>Password</label>
-      <input type="password" class="form-control" ng-model="vm.password" placeholder="Password">
+      <input type="password" class="form-control" name="password" ng-model="vm.password" ng-minlength="6" placeholder="Password" required>
+      <p ng-show="!registrationForm.password.$dirty && vm.submitted" class="help-block">Please enter a password.</p>
+      <p ng-show="registrationForm.password.$error.minlength && registrationForm.password.$touched && vm.submitted" class="help-block">Your password needs to be at least 6 characters.</p>
     </div>
-    <button ng-click="vm.register()" class="btn btn-primary">Register</button>
+    <button ng-click="vm.formInvalid=(!vm.firstName && !vm.lastName && !vm.email && !vm.password || registrationForm.$invalid); vm.register(vm.FormInvalid)" class="btn btn-primary">Register</button>
   </form>
 </div>

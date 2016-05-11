@@ -9,15 +9,22 @@
     function Controller() {
       var vm = this;
 
-      vm.firstName = null;
-      vm.lastName = null;
       vm.email = null;
+      vm.firstName = null;
+      vm.formInvalid = false;
+      vm.lastName = null;
       vm.password = null;
+      vm.submitted = false;
 
       vm.register = register;
 
       function register() {
-        console.log("Email: "+ vm.email + ", Password: "+ vm.password);
+        vm.submitted = true;
+
+        if (!vm.formInvalid) {
+          console.log("Form complete");
+        }
+        
       }
 
     }
