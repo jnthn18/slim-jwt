@@ -11,20 +11,23 @@
 
       vm.email = null;
       vm.password = null;
+      vm.loginSuccess = true;
 
       vm.login = login;
 
       function login() {
+        vm.submitted = true;
         var info = {
           email: vm.email,
           password: vm.password
         }
 
         $http.post('api/login', info).success(function(data) {
-          console.log(data);
+          vm.loginSuccess = true;
         }).error(function(error) {
-          console.log(error);
+          vm.loginSuccess = false;
         });
+        
       }
 
     }

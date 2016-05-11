@@ -27,10 +27,12 @@ function loginUser($request, $response) {
     $hashedPassword = $result['password'];
 
     if(password_verify($password, $hashedPassword)) {
-      echo json_encode("Login Works");
+      echo json_encode("Login works");
     } else {
-      echo json_encode("Wrong Password");
+      return $response->withStatus(401);
     }
+  } else {
+    return $response->withStatus(401);
   }
 }
 
