@@ -6,7 +6,7 @@
     .module('app')
     .controller('Register.IndexController', Controller);
 
-    function Controller() {
+    function Controller($http, $state) {
       var vm = this;
 
       vm.email = null;
@@ -22,7 +22,17 @@
         vm.submitted = true;
 
         if (!vm.formInvalid) {
-          console.log("Form complete");
+          var info = {
+            email: vm.email,
+            password: vm.password,
+            firstName: vm.firstName,
+            lastName: vm.lastName
+          }
+          $http.post('api/register', info).success(function(data) {
+            $state.go("login");
+          }).error(function(error) {
+            console.log(error);
+          });
         }
         
       }
