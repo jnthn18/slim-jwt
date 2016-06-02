@@ -1,12 +1,31 @@
 <?php
 require 'vendor/autoload.php';
+use \Firebase\JWT\JWT;
 
 $app = new \Slim\App;
 
+$app->add(new \Slim\Middleware\JwtAuthentication([
+  "path" => "/user",
+  "secret" => "thegreathoudini",
+  "error" => function($request, $response, $arguments) {
+    $data["status"] = "error";
+    $data["message"] = $arguments["message"];
+    return $response
+      ->withHeader('Content-Type', "application/json")
+      ->write(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+  }
+]));
+
 $app->post('/login', 'loginUser');
+$app->get('/user', 'user');
 $app->post('/register', 'registerUser');
 
 $app->run();
+
+function user($request, $response) {
+  echo json_encode("test");
+  // print_r($app->jwt);
+}
 
 function loginUser($request, $response) {
   $email = $request->getParam('email');
@@ -27,12 +46,18 @@ function loginUser($request, $response) {
     $hashedPassword = $result['password'];
 
     if(password_verify($password, $hashedPassword)) {
-      echo json_encode("Login works");
+      $key = "thegreathoudini";
+      $token = array(
+        "iss" => "Slim JWT",
+        "email" => $email,
+        "sub" => $result['id'],
+        "exp" => time() + (60 * 60 * 24)
+      );
+      $jwt = JWT::encode($token, $key, 'HS256');
+      echo json_encode(array("token" => $jwt));
     } else {
       return $response->withStatus(401);
     }
-  } else {
-    return $response->withStatus(401);
   }
 }
 

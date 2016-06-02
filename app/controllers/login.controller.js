@@ -6,7 +6,7 @@
     .module('app')
     .controller('Login.IndexController', Controller);
 
-    function Controller($http) {
+    function Controller($http, $window, $state) {
       var vm = this;
 
       vm.email = null;
@@ -23,7 +23,9 @@
         }
 
         $http.post('api/login', info).success(function(data) {
-          vm.loginSuccess = true;
+          var token = data['token'];
+          $window.localStorage.setItem('token', token);
+          $state.go('user');
         }).error(function(error) {
           vm.loginSuccess = false;
         });

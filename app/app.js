@@ -22,12 +22,18 @@
         templateUrl: 'app/views/register.html',
         controller: 'Register.IndexController',
         controllerAs: 'vm'
+      })
+      .state('user', {
+        'url': '/user',
+        templateUrl: 'app/views/user.html',
+        controller: 'User.IndexController',
+        controllerAs: 'vm'
       });
   }
 
   function run($http, $rootScope, $window) {
     // add JWT token as default auth header
-    $http.defaults.headers.common['Authorization'] = 'Bearer' + $window.jwtToken;
+    // $http.defaults.headers.common['Authorization'] = 'Bearer ' + $window.jwtToken;
 
   }
 
