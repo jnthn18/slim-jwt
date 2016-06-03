@@ -4,6 +4,12 @@ use \Firebase\JWT\JWT;
 
 $app = new \Slim\App;
 
+$container = $app->getContainer();
+
+$container["jwt"] = function ($container) {
+  return new StdClass;
+};
+
 $app->add(new \Slim\Middleware\JwtAuthentication([
   "path" => "/user",
   "secret" => "thegreathoudini",
@@ -13,17 +19,27 @@ $app->add(new \Slim\Middleware\JwtAuthentication([
     return $response
       ->withHeader('Content-Type', "application/json")
       ->write(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+  },
+  "callback" => function ($request, $response, $arguments) use ($container) {
+    $container["jwt"] = $arguments["decoded"];
   }
 ]));
 
 $app->post('/login', 'loginUser');
 $app->get('/user', 'user');
+$app->get('/user/auth', 'auth');
 $app->post('/register', 'registerUser');
 
 $app->run();
 
+function auth($request, $response){
+  $decoded = $request->getAttribute("token");
+  echo json_encode($decoded);
+}
+
 function user($request, $response) {
-  echo json_encode("test");
+  $decoded = $request->getAttribute("token");
+  echo json_encode($decoded);
   // print_r($app->jwt);
 }
 
@@ -47,11 +63,13 @@ function loginUser($request, $response) {
 
     if(password_verify($password, $hashedPassword)) {
       $key = "thegreathoudini";
+      //Set time for 25 seconds before expiring for testing
       $token = array(
         "iss" => "Slim JWT",
         "email" => $email,
         "sub" => $result['id'],
-        "exp" => time() + (60 * 60 * 24)
+        "iat" => time(),
+        "exp" => time() + (25)
       );
       $jwt = JWT::encode($token, $key, 'HS256');
       echo json_encode(array("token" => $jwt));

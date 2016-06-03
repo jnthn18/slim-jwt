@@ -12,6 +12,7 @@
     <ul class="nav navbar-nav">
       <li ui-sref-active="active" ><a ui-sref="login">Login</a></li>
       <li ui-sref-active="active" ><a ui-sref="register">Register</a></li>
+      <li ui-sref-active="active" ng-if="$('.nav>li:nth-child(2)').hasClass('active')"><a ui-sref="user">User Info</a></li>
     </ul>
   </nav>
 
