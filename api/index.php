@@ -26,7 +26,7 @@ function user($request, $response) {
   if ($jwt) {
     try {
       $token = JWT::decode($jwt, $secret, array('HS256'));
-      echo json_encode($token);
+      echo json_encode("success");
     } catch (Exception $e) {
       echo json_encode('{"error":{"text":'. $e->getMessage() . '}}');
     }
@@ -56,13 +56,13 @@ function loginUser($request, $response) {
       $config = Factory::fromFile('config.php', true);
 
       $key = $config->get('jwtKey');
-      //Set time for 60 seconds before expiring for testing
+      //Set time for 60 minutes before expiring for testing
       $token = array(
         "iss" => "Slim JWT",
         "email" => $email,
         "sub" => $result['id'],
         "iat" => time(),
-        "exp" => time() + (60)
+        "exp" => time() + (60*60)
       );
       $jwt = JWT::encode($token, $key);
       echo json_encode(array("token" => $jwt));
@@ -111,11 +111,9 @@ function registerUser($request, $response) {
 }
 
 function getConnection() {
-  $dbhost="127.0.0.1";
-  $dbuser="root";
-  $dbpass="";
-  $dbname="slim-jwt";
-  $dbh = new PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
+  $config = Factory::fromFile('config.php', true);
+  $db = $config->get('database')->get('params');
+  $dbh = new PDO("mysql:host=$db[host];dbname=$db[dbname]", $db['username'], $db['password']);
   $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   return $dbh;
 }
