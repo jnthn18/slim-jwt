@@ -8,6 +8,8 @@
     function Controller($http, $state, $window) {
       var vm = this;
 
+      vm.time = null;
+
       vm.getInfo = getInfo;
       vm.logOut = logOut;
 
@@ -28,6 +30,7 @@
         $http.defaults.headers.common['Authorization'] = 'Bearer '+token;
         $http.get('api/user').success(function(data) {
           console.log(data);
+          vm.time = data.exp*1000;
         });
       }
 

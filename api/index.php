@@ -1,29 +1,10 @@
 <?php
 require 'vendor/autoload.php';
 use \Firebase\JWT\JWT;
+use Zend\Config\Config;
+use Zend\Config\Factory;
 
 $app = new \Slim\App;
-
-$container = $app->getContainer();
-
-$container["jwt"] = function ($container) {
-  return new StdClass;
-};
-
-$app->add(new \Slim\Middleware\JwtAuthentication([
-  "path" => "/user",
-  "secret" => "thegreathoudini",
-  "error" => function($request, $response, $arguments) {
-    $data["status"] = "error";
-    $data["message"] = $arguments["message"];
-    return $response
-      ->withHeader('Content-Type', "application/json")
-      ->write(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
-  },
-  "callback" => function ($request, $response, $arguments) use ($container) {
-    $container["jwt"] = $arguments["decoded"];
-  }
-]));
 
 $app->post('/login', 'loginUser');
 $app->get('/user', 'user');
@@ -33,14 +14,24 @@ $app->post('/register', 'registerUser');
 $app->run();
 
 function auth($request, $response){
-  $decoded = $request->getAttribute("token");
-  echo json_encode($decoded);
 }
 
 function user($request, $response) {
-  $decoded = $request->getAttribute("token");
-  echo json_encode($decoded);
-  // print_r($app->jwt);
+  $authHeader = $request->getHeader('Authorization');
+  $config = Factory::fromFile('config.php', true);
+  $secret = $config->get('jwtKey');
+
+  list($jwt) = sscanf( $authHeader[0], 'Bearer %s');
+
+  if ($jwt) {
+    try {
+      $token = JWT::decode($jwt, $secret, array('HS256'));
+      echo json_encode($token);
+    } catch (Exception $e) {
+      echo json_encode('{"error":{"text":'. $e->getMessage() . '}}');
+    }
+  }
+  
 }
 
 function loginUser($request, $response) {
@@ -62,16 +53,18 @@ function loginUser($request, $response) {
     $hashedPassword = $result['password'];
 
     if(password_verify($password, $hashedPassword)) {
-      $key = "thegreathoudini";
-      //Set time for 25 seconds before expiring for testing
+      $config = Factory::fromFile('config.php', true);
+
+      $key = $config->get('jwtKey');
+      //Set time for 60 seconds before expiring for testing
       $token = array(
         "iss" => "Slim JWT",
         "email" => $email,
         "sub" => $result['id'],
         "iat" => time(),
-        "exp" => time() + (25)
+        "exp" => time() + (60)
       );
-      $jwt = JWT::encode($token, $key, 'HS256');
+      $jwt = JWT::encode($token, $key);
       echo json_encode(array("token" => $jwt));
     } else {
       return $response->withStatus(401);

@@ -1,5 +1,6 @@
 <div class="col-md-10 col-md-offset-1">
   <h1>Hello World</h1>
+  <h3>Expires at: {{vm.time | date:'mediumTime'}}</h3>
   <button class="btn btn-primary" ng-click="vm.getInfo()">Get Info</button>
   <button class="btn btn-default" ng-click="vm.logOut()">Log Out</button>
 </div>
