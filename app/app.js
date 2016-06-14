@@ -27,21 +27,38 @@
         'url': '/user',
         templateUrl: 'app/views/user.html',
         controller: 'User.IndexController',
-        controllerAs: 'vm'
+        controllerAs: 'vm',
+        resolve: {
+          authenticate: authenticate
+        }
       });
+
+      function authenticate($q, AuthService, $state, $timeout) {
+        if (AuthService.Authenticate()) {
+          return $q.when();
+        } else {
+          $timeout(function() {
+            $state.go('login');
+          });
+
+          return $q.reject();
+        }
+      }
   }
 
-  function run($http, $rootScope, $window) {
-    if ($window.localStorage.getItem('token') && $window.localStorage.getItem('displayName')) {
-      $rootScope.loggedIn = true;
-      $rootScope.displayName = $window.localStorage.getItem('displayName');
-    } else {
-      $rootScope.loggedIn = false;
-      $rootScope.displayName = null;
-    }
+  function run($http, $rootScope, $window, AuthService) {
+    $rootScope.loggedIn = AuthService.isLoggedIn();
+    $rootScope.displayName = AuthService.getIdentity();
     
     // add JWT token as default auth header
     $http.defaults.headers.common['Authorization'] = 'Bearer ' + $window.localStorage.getItem('token');
+
+    $rootScope.$on('$stateChangeStart', function(event, toState, toStateParams) {
+      $rootScope.toState = toState;
+      $rootScope.toStateParams = toStateParams;
+
+      if(AuthService.getIdentity()) AuthService.Authenticate();
+    });
   }
 
 

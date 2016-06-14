@@ -25,7 +25,7 @@ function user($request, $response) {
       $email = $token->email;
       echo json_encode(array('display' => $email));
     } catch (Exception $e) {
-      echo json_encode('{"error":{"text":'. $e->getMessage() . '}}');
+      return $response->withStatus(401);
     }
   }
   
