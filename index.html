@@ -5,22 +5,17 @@
   <title>Slim JWT</title>
 
   <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
-  <style type="text/css">
-    .nav>li:nth-child(3)>a {
-      display: none;
-    }
-    .nav>li:nth-child(3).active>a{
-      display: block;
-    }
-  </style>
 </head>
 <body ng-app="app">
   <!-- header -->
   <nav class="navbar navbar-default">
     <ul class="nav navbar-nav">
-      <li ui-sref-active="active" ><a ui-sref="login">Login</a></li>
-      <li ui-sref-active="active" ><a ui-sref="register">Register</a></li>
-      <li ui-sref-active="active"><a ui-sref="user">User Info</a></li>
+      <li ui-sref-active="active" ng-show="!$root.loggedIn"><a ui-sref="login">Login</a></li>
+      <li ui-sref-active="active" ng-show="!$root.loggedIn"><a ui-sref="register">Register</a></li>
+      <li ui-sref-active="active" ng-show="$root.loggedIn"><a ui-sref="user">User Info</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right" ng-show="$root.loggedIn">
+      <li><a>{{$root.displayName}}</a></li>
     </ul>
   </nav>
 

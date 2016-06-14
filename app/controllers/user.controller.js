@@ -5,12 +5,9 @@
     .module('app')
     .controller('User.IndexController', Controller);
 
-    function Controller($http, $state, $window) {
+    function Controller($http, $state, $window, $rootScope) {
       var vm = this;
 
-      vm.time = null;
-
-      vm.getInfo = getInfo;
       vm.logOut = logOut;
 
       if($window.localStorage.getItem('token') == undefined){
@@ -18,24 +15,17 @@
       } else {
         var token = $window.localStorage.getItem('token');
         $http.defaults.headers.common['Authorization'] = 'Bearer '+token;
-        $http.get('api/user/auth').error(function(error) {
+        $http.get('api/user').error(function(error) {
           if(error.status == "error") {
             $state.go('login');
           }
         });
       }
 
-      function getInfo(){
-        var token = $window.localStorage.getItem('token');
-        $http.defaults.headers.common['Authorization'] = 'Bearer '+token;
-        $http.get('api/user').success(function(data) {
-          console.log(data);
-          vm.time = data.exp*1000;
-        });
-      }
-
       function logOut(){
+        $rootScope.loggedIn = false;
         $window.localStorage.removeItem('token');
+        $window.localStorage.removeItem('displayName');
         $state.go('login');
       }
     }

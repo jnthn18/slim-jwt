@@ -8,13 +8,9 @@ $app = new \Slim\App;
 
 $app->post('/login', 'loginUser');
 $app->get('/user', 'user');
-$app->get('/user/auth', 'auth');
 $app->post('/register', 'registerUser');
 
 $app->run();
-
-function auth($request, $response){
-}
 
 function user($request, $response) {
   $authHeader = $request->getHeader('Authorization');
@@ -26,7 +22,8 @@ function user($request, $response) {
   if ($jwt) {
     try {
       $token = JWT::decode($jwt, $secret, array('HS256'));
-      echo json_encode("success");
+      $email = $token->email;
+      echo json_encode(array('display' => $email));
     } catch (Exception $e) {
       echo json_encode('{"error":{"text":'. $e->getMessage() . '}}');
     }
@@ -65,7 +62,7 @@ function loginUser($request, $response) {
         "exp" => time() + (60*60)
       );
       $jwt = JWT::encode($token, $key);
-      echo json_encode(array("token" => $jwt));
+      echo json_encode(array("token" => $jwt, "displayName" => $email));
     } else {
       return $response->withStatus(401);
     }

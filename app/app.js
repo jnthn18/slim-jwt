@@ -32,18 +32,17 @@
   }
 
   function run($http, $rootScope, $window) {
+    if ($window.localStorage.getItem('token') && $window.localStorage.getItem('displayName')) {
+      $rootScope.loggedIn = true;
+      $rootScope.displayName = $window.localStorage.getItem('displayName');
+    } else {
+      $rootScope.loggedIn = false;
+      $rootScope.displayName = null;
+    }
+    
     // add JWT token as default auth header
-    // $http.defaults.headers.common['Authorization'] = 'Bearer ' + $window.localStorage.getItem('token');
+    $http.defaults.headers.common['Authorization'] = 'Bearer ' + $window.localStorage.getItem('token');
   }
 
-  // manually bootstrap angular after the JWT token is retrieved from the server
-  // $(function () {
-  //   // get JWT token from server
-  //   $.get('app/token', function (token) {
-  //     window.jwtToken = token;
-
-  //     angular.bootstrap(document, ['app']);
-  //   });
-  // });
 
 })();
