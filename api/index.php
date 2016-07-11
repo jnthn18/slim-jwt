@@ -8,7 +8,6 @@ $app = new \Slim\App;
 
 $app->get('/authenticate', 'authenticate');
 $app->post('/login', 'loginUser');
-$app->get('/user', 'user');
 $app->post('/register', 'registerUser');
 
 $app->run();
@@ -30,25 +29,6 @@ function authenticate($request, $response) {
   } else {
     return $response->withJson(array('isAuth' => false), 200);
   }
-}
-
-function user($request, $response) {
-  $authHeader = $request->getHeader('Authorization');
-  $config = Factory::fromFile('config.php', true);
-  $secret = $config->get('jwtKey');
-
-  list($jwt) = sscanf( $authHeader[0], 'Bearer %s');
-
-  if ($jwt) {
-    try {
-      $token = JWT::decode($jwt, $secret, array('HS256'));
-      $email = $token->email;
-      echo json_encode(array('display' => $email));
-    } catch (Exception $e) {
-      return $response->withStatus(401);
-    }
-  }
-  
 }
 
 function loginUser($request, $response) {
