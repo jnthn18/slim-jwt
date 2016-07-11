@@ -31,22 +31,9 @@
         controllerAs: 'vm',
       });
 
-      // function authenticate($q, AuthService, $state, $timeout) {
-      //   if (AuthService.Authenticate()) {
-      //     return $q.when();
-      //   } else {
-      //     $timeout(function() {
-      //       $state.go('login');
-      //     });
-
-      //     return $q.reject();
-      //   }
-      // }
   }
 
   function run($http, $rootScope, $window, AuthService) {
-    // $rootScope.loggedIn = AuthService.isLoggedIn();
-    // $rootScope.displayName = AuthService.getIdentity();
     
     // add JWT token as default auth header
     // $http.defaults.headers.common['Authorization'] = 'Bearer ' + $window.localStorage.getItem('token');

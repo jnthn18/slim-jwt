@@ -9,6 +9,7 @@
     var service = {};
 
     service.isAuth = isAuth;
+    service.logIn = logIn;
 
     return service;
 
@@ -16,6 +17,10 @@
       var token = $window.localStorage.getItem('token');
       $http.defaults.headers.common['Authorization'] = 'Bearer ' + token;
       return $http.get('api/authenticate').then(handleSuccess, handleError);
+    }
+
+    function logIn(data) {
+      return $http.post('api/login', data).then(handleSuccess, handleError);
     }
 
     function handleSuccess(res) {

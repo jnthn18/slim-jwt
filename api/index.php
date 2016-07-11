@@ -82,9 +82,9 @@ function loginUser($request, $response) {
         "exp" => time() + (60*60)
       );
       $jwt = JWT::encode($token, $key);
-      echo json_encode(array("token" => $jwt, "displayName" => $email));
+      return $response->withJson(array("token" => $jwt, "displayName" => $email), 200);
     } else {
-      return $response->withStatus(401);
+      return $response->withJson(array("token" => null, "displayName" => null), 200);
     }
   }
 }
