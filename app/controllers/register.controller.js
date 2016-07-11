@@ -29,8 +29,7 @@
             lastName: vm.lastName
           }
           $http.post('api/register', info).success(function(data) {
-            console.log(data);
-            // $state.go("login");
+            $state.go("login", {message: 'Thank you for registering!'});
           }).error(function(error) {
             console.log(error);
           });

@@ -15,7 +15,8 @@
         'url': '/login',
         templateUrl: 'app/views/login.html',
         controller: 'Login.IndexController',
-        controllerAs: 'vm'
+        controllerAs: 'vm',
+        params: { message: null }
       })
       .state('register', {
         'url': '/register',
@@ -28,37 +29,34 @@
         templateUrl: 'app/views/user.html',
         controller: 'User.IndexController',
         controllerAs: 'vm',
-        resolve: {
-          authenticate: authenticate
-        }
       });
 
-      function authenticate($q, AuthService, $state, $timeout) {
-        if (AuthService.Authenticate()) {
-          return $q.when();
-        } else {
-          $timeout(function() {
-            $state.go('login');
-          });
+      // function authenticate($q, AuthService, $state, $timeout) {
+      //   if (AuthService.Authenticate()) {
+      //     return $q.when();
+      //   } else {
+      //     $timeout(function() {
+      //       $state.go('login');
+      //     });
 
-          return $q.reject();
-        }
-      }
+      //     return $q.reject();
+      //   }
+      // }
   }
 
   function run($http, $rootScope, $window, AuthService) {
-    $rootScope.loggedIn = AuthService.isLoggedIn();
-    $rootScope.displayName = AuthService.getIdentity();
+    // $rootScope.loggedIn = AuthService.isLoggedIn();
+    // $rootScope.displayName = AuthService.getIdentity();
     
     // add JWT token as default auth header
-    $http.defaults.headers.common['Authorization'] = 'Bearer ' + $window.localStorage.getItem('token');
+    // $http.defaults.headers.common['Authorization'] = 'Bearer ' + $window.localStorage.getItem('token');
 
-    $rootScope.$on('$stateChangeStart', function(event, toState, toStateParams) {
-      $rootScope.toState = toState;
-      $rootScope.toStateParams = toStateParams;
+    // $rootScope.$on('$stateChangeStart', function(event, toState, toStateParams) {
+    //   $rootScope.toState = toState;
+    //   $rootScope.toStateParams = toStateParams;
 
-      if(AuthService.getIdentity()) AuthService.Authenticate();
-    });
+    //   if(AuthService.getIdentity()) AuthService.Authenticate();
+    // });
   }
 
 

@@ -6,11 +6,31 @@ use Zend\Config\Factory;
 
 $app = new \Slim\App;
 
+$app->get('/authenticate', 'authenticate');
 $app->post('/login', 'loginUser');
 $app->get('/user', 'user');
 $app->post('/register', 'registerUser');
 
 $app->run();
+
+function authenticate($request, $response) {
+  $authHeader = $request->getHeader('Authorization');
+  $config = Factory::fromFile('config.php', true);
+  $secret = $config->get('jwtKey');
+
+  list($jwt) = sscanf( $authHeader[0], 'Bearer %s');
+
+  if ($jwt) {
+    try {
+      $token = JWT::decode($jwt, $secret, array('HS256'));
+      return $response->withJson(array('isAuth' => true), 200);
+    } catch (Exception $e) {
+      return $response->withJson(array('isAuth' => false), 200);
+    }
+  } else {
+    return $response->withJson(array('isAuth' => false), 200);
+  }
+}
 
 function user($request, $response) {
   $authHeader = $request->getHeader('Authorization');

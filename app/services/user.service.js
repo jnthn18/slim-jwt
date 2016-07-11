@@ -5,45 +5,25 @@
     .module('app')
     .service('AuthService', Service);
 
-  function Service($window, $http, $state, $rootScope, $q) {
-    var self = this;
+  function Service($window, $http, $q) {
+    var service = {};
 
-    self.isLoggedIn = function() {
-      if($window.localStorage.getItem('token')) {
-        return true;
-      } else {
-        return false;
-      }
-    }
+    service.isAuth = isAuth;
 
-    self.getIdentity = function() {
-      var name = $window.localStorage.getItem('displayName');
-      if(name) {
-        return name;
-      } else {
-        return null;
-      }
-    }
+    return service;
 
-    self.logOut = function() {
-      $rootScope.loggedIn = false;
-      $window.localStorage.removeItem('token');
-      $window.localStorage.removeItem('displayName');
-      $state.go('login');
-    }
-
-    self.Authenticate = function(token) {
-      var d = $q.defer();
-
+    function isAuth() {
+      var token = $window.localStorage.getItem('token');
       $http.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-      $http.get('api/user').success(function(data){
-        d.resolve(true);
-      }).error(function() {
-        d.resolve(false);
-        $state.go('login');
-      });
+      return $http.get('api/authenticate').then(handleSuccess, handleError);
+    }
 
-      return d.promise;
+    function handleSuccess(res) {
+      return res.data;
+    }
+
+    function handleError(res) {
+      return $q.reject(res.data);
     }
   }
 })();

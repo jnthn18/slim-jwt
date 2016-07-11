@@ -6,12 +6,13 @@
     .module('app')
     .controller('Login.IndexController', Controller);
 
-    function Controller($http, $window, $state, $rootScope) {
+    function Controller($http, $window, $state, $rootScope, $stateParams) {
       var vm = this;
 
       vm.email = null;
       vm.password = null;
       vm.loginSuccess = true;
+      vm.message = $stateParams.message;
 
       vm.login = login;
 
