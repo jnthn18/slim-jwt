@@ -7,6 +7,7 @@ use Zend\Config\Factory;
 $app = new \Slim\App;
 
 $app->get('/authenticate', 'authenticate');
+$app->get('/identity', 'identity');
 $app->post('/login', 'loginUser');
 $app->post('/register', 'registerUser');
 
@@ -31,6 +32,23 @@ function authenticate($request, $response) {
   }
 }
 
+function identity($request, $response) {
+  $authHeader = $request->getHeader('Authorization');
+  $config = Factory::fromFile('config.php', true);
+  $secret = $config->get('jwtKey');
+
+  list($jwt) = sscanf( $authHeader[0], 'Bearer %s');
+
+  if ($jwt) {
+    try {
+      $token = JWT::decode($jwt, $secret, array('HS256'));
+      return $response->withJson(array('identity' => $token), 200);
+    } catch (Exception $e) {
+      return $response->withStatus(401);
+    }
+  }
+}
+
 function loginUser($request, $response) {
   $email = $request->getParam('email');
   $password = $request->getParam('password');
@@ -42,7 +60,7 @@ function loginUser($request, $response) {
     $stmt->bindParam(':email', $email);
     $stmt->execute();
   } catch (PDOException $e) {
-    echo json_encode('{"error":{"text":'. $e->getMessage() . '}}');
+    echo json_encode($e->getMessage());
   }
 
   if($stmt->rowCount() > 0) {
@@ -84,7 +102,7 @@ function registerUser($request, $response) {
     $stmt->bindParam(':email', $email);
     $stmt->execute();
   } catch (PDOException $e) {
-    echo json_encode('{"error":{"text":'. $e->getMessage() . '}}');
+    echo json_encode($e->getMessage());
   }
   
   if($stmt->rowCount() > 0){
@@ -101,7 +119,7 @@ function registerUser($request, $response) {
       $stmt->bindParam(':last_name', $last_name);
       $stmt->execute();
     } catch (PDOException $e) {
-      echo json_encode('{"error":{"text":'. $e->getMessage() . '}}');
+      echo json_encode($e->getMessage());
     }
     echo json_encode("User: ".$first_name." ".$last_name." created");
   }

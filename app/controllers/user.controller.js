@@ -18,7 +18,7 @@
 
       function test(){
         AuthService.isAuth().then(function(data) {
-          console.log(data.isAuth);
+          console.log(data);
         });
       }
     }

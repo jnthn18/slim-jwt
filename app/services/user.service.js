@@ -14,13 +14,16 @@
     return service;
 
     function isAuth() {
-      var token = $window.localStorage.getItem('token');
-      $http.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-      return $http.get('api/authenticate').then(handleSuccess, handleError);
+      // var token = $window.localStorage.getItem('token');
+      // $http.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+      // return $http.get('api/authenticate').then(function(res){
+      //   return res.data.isAuth;
+      // });
     }
 
     function logIn(data) {
-      return $http.post('api/login', data).then(handleSuccess, handleError);
+      return $http.post('api/login', data).then(function(res) {
+      });
     }
 
     function handleSuccess(res) {
